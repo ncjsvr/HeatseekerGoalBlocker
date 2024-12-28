@@ -1,0 +1,91 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic Libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran Module Files
+*.mod
+*.smod
+
+# Compiled Static Libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# IntelliSense Files
+*.ipch
+*.opensdf
+*.sdf
+
+# IDE Specific Files
+*.user
+*.userosscache
+*.suo
+*.xcuserdata
+*.DS_Store  # macOS finder files
+
+# Debugging and Cache Files
+*.log
+*.stackdump
+core.*
+*.cache
+*.tmp
+*.bak
+*.old
+*.swp
+
+# Build System Files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+CMakeScripts/
+cmake_install.cmake
+build/
+
+# Code Coverage Reports
+*.gcno
+*.gcda
+*.gcov
+coverage/
+
+# Generated Files
+docs/
+docs/generated/
+*.dox
+
+# Temporary or Backup Files
+*.~* 
+*.bak 
+*.orig
+*~
+
+# Editor Specific Files
+.idea/
+.vscode/
+*.editorconfig
+*.vscode/
+*.code-workspace
+*.sw?
+
+# Auto-Generated Test Data
+/tests/output/
+tests/temp/
