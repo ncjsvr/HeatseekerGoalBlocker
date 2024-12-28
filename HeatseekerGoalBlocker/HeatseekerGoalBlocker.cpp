@@ -89,7 +89,7 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 		Vector normal = barrier1.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
-		ball.SetVelocity(reflection * 1.5f);
+		ball.SetVelocity(reflection);
 		ball.SetLocation(ballLocation + normal * 10.0f);
 		
 		heatseekerBall.SetCarHitTeamNum(0);
@@ -102,7 +102,7 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 		Vector normal = barrier2.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
-		ball.SetVelocity(reflection * 1.5f);
+		ball.SetVelocity(reflection);
 		ball.SetLocation(ballLocation + normal * 10.0f);
 		
 		heatseekerBall.SetCarHitTeamNum(1);
