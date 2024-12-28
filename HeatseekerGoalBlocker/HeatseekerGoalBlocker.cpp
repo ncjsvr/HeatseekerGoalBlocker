@@ -56,12 +56,12 @@ void HeatseekerGoalBlocker::CreateGoalBlocker()
 {
 	if (!gameWrapper->IsInGame()) return;
 
-	barrier1.center = Vector{0, -5150, 300};
-	barrier1.size = Vector{2500, 200, 1200};
+	barrier1.center = Vector{0, -5150 - 100, 300};
+	barrier1.size = Vector{2500, 400, 1200};
 	
 	if (blockBothGoals) {
-		barrier2.center = Vector{0, 5150, 300};
-		barrier2.size = Vector{2500, 200, 1200};
+		barrier2.center = Vector{0, 5150 + 100, 300};
+		barrier2.size = Vector{2500, 400, 1200};
 	}
 	
 	active = true;
