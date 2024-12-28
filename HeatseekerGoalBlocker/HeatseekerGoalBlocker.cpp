@@ -89,26 +89,44 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 		Vector normal = barrier1.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
+		float incomingSpeed = ballVelocity.magnitude();
+		float reflectionMagnitude = sqrt(reflection.X * reflection.X + 
+									   reflection.Y * reflection.Y + 
+									   reflection.Z * reflection.Z);
+		if (reflectionMagnitude > 0) {
+			reflection.X = (reflection.X / reflectionMagnitude) * incomingSpeed;
+			reflection.Y = (reflection.Y / reflectionMagnitude) * incomingSpeed;
+			reflection.Z = (reflection.Z / reflectionMagnitude) * incomingSpeed;
+		}
+		
 		ball.SetVelocity(reflection);
-		ball.SetLocation(ballLocation + normal * 10.0f);
+		ball.SetLocation(ballLocation + normal * 1.0f);
 		
 		heatseekerBall.SetCarHitTeamNum(0);
 		heatseekerBall.OnHitTeamNumChanged();
 		heatseekerBall.UpdateColor();
-		heatseekerBall.SetTargetSpeed(heatseekerBall.GetTargetSpeed());
 	}
 	
 	if (blockBothGoals && barrier2.collides(ballLocation)) {
 		Vector normal = barrier2.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
+		float incomingSpeed = ballVelocity.magnitude();
+		float reflectionMagnitude = sqrt(reflection.X * reflection.X + 
+									   reflection.Y * reflection.Y + 
+									   reflection.Z * reflection.Z);
+		if (reflectionMagnitude > 0) {
+			reflection.X = (reflection.X / reflectionMagnitude) * incomingSpeed;
+			reflection.Y = (reflection.Y / reflectionMagnitude) * incomingSpeed;
+			reflection.Z = (reflection.Z / reflectionMagnitude) * incomingSpeed;
+		}
+		
 		ball.SetVelocity(reflection);
-		ball.SetLocation(ballLocation + normal * 10.0f);
+		ball.SetLocation(ballLocation + normal * 1.0f);
 		
 		heatseekerBall.SetCarHitTeamNum(1);
 		heatseekerBall.OnHitTeamNumChanged();
 		heatseekerBall.UpdateColor();
-		heatseekerBall.SetTargetSpeed(heatseekerBall.GetTargetSpeed());
 	}
 }
 
