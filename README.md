@@ -13,8 +13,10 @@ A BakkesMod plugin that allows you to block goals in Heatseeker mode, perfect fo
 ## Installation
 
 1) Install from Bakkesmod plugins site (recommended) - https://bakkesplugins.com/plugins/view/494
+
 or
-2)Download manually from Github releases and place in your plugins folder
+
+2) Download manually from Github releases and place in your plugins folder
 
 ## Usage
 
