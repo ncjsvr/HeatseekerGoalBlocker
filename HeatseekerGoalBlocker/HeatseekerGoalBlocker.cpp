@@ -25,7 +25,7 @@ void HeatseekerGoalBlocker::onLoad()
 			}
 		});
 	
-	gameWrapper->HookEventPost("Function TAGame.GameEvent_Soccar_TA.InitGame",
+	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.WaitingForPlayers.OnBallSpawned",
 		std::bind(&HeatseekerGoalBlocker::OnGameStart, this));
 }
 
@@ -33,14 +33,14 @@ void HeatseekerGoalBlocker::OnGameStart()
 {
 	CheckGameMode();
 	
-	if (isHeatseeker && isLANMatch) {
-				CreateGoalBlocker();
+	if (isHeatseeker && isLocalMatch) {
+		CreateGoalBlocker();
 	}
 }
 
 void HeatseekerGoalBlocker::CheckGameMode()
 {
-	if (!gameWrapper->IsInGame()) return;
+	if (!gameWrapper->IsInGame() || gameWrapper->IsInOnlineGame()) return;
 
 	ServerWrapper server = gameWrapper->GetCurrentGameState();
 	if (server.IsNull()) return;
@@ -50,19 +50,25 @@ void HeatseekerGoalBlocker::CheckGameMode()
 		int playlistId = playlist.GetPlaylistId();
 		cvarManager->log("Playlist ID: " + std::to_string(playlistId));
 		cvarManager->log("Playlist Name: " + playlist.GetTitle().ToString());
-		
-		isHeatseeker = (playlistId == 24);
-		isLANMatch = playlist.IsLanMatch();
+		bool isLanMatch = (playlistId == 24);
+		bool isExhibitionMatch = (playlistId == 8);
+
+		BallWrapper ball = server.GetBall();
+		if (ball.IsNull()) { return; }
+
+		isHeatseeker = ball.IsGodBall();
+		isLocalMatch = (isExhibitionMatch) || (isLanMatch);
+		active = false;
 	}
 
 	cvarManager->log("Current game state:");
 	cvarManager->log("Heatseeker mode: " + std::to_string(isHeatseeker));
-	cvarManager->log("LAN match: " + std::to_string(isLANMatch));
+	cvarManager->log("LAN match: " + std::to_string(isLocalMatch));
 }
 
 void HeatseekerGoalBlocker::CreateGoalBlocker()
 {
-	if (!gameWrapper->IsInGame()) return;
+	if (!gameWrapper->IsInGame() || gameWrapper->IsInOnlineGame()) return;
 
 	if (blockBlueGoal) {
 		barrier1.center = Vector{0, -5150 - 100, 300};
@@ -84,7 +90,7 @@ void HeatseekerGoalBlocker::CreateGoalBlocker()
 
 void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 {
-	if (!active || !gameWrapper->IsInGame()) return;
+	if (!active || !gameWrapper->IsInGame() || gameWrapper->IsInOnlineGame()) return;
 
 	ServerWrapper server = gameWrapper->GetCurrentGameState();
 	if (server.IsNull()) return;
@@ -94,7 +100,11 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 
 	Vector ballLocation = ball.GetLocation();
 	Vector ballVelocity = ball.GetVelocity();
-	BallGodWrapper heatseekerBall = BallGodWrapper(ball.memory_address);
+	bool isHeatseekerBall = ball.IsGodBall();
+	BallGodWrapper heatseekerBall = NULL;
+	if (isHeatseekerBall) {
+		heatseekerBall = BallGodWrapper(ball.memory_address);
+	}
 
 	if (blockBlueGoal && barrier1.collides(ballLocation)) {
 		Vector normal = barrier1.getCollisionNormal(ballLocation);
@@ -113,9 +123,11 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 		ball.SetVelocity(reflection);
 		ball.SetLocation(ballLocation + normal * 1.0f);
 		
-		heatseekerBall.SetCarHitTeamNum(0);
-		heatseekerBall.OnHitTeamNumChanged();
-		heatseekerBall.UpdateColor();
+		if (isHeatseekerBall && !heatseekerBall.IsNull()) {
+			heatseekerBall.SetCarHitTeamNum(0);
+			heatseekerBall.OnHitTeamNumChanged();
+			heatseekerBall.UpdateColor();
+		}
 	}
 	
 	if (blockOrangeGoal && barrier2.collides(ballLocation)) {
@@ -135,9 +147,11 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 		ball.SetVelocity(reflection);
 		ball.SetLocation(ballLocation + normal * 1.0f);
 		
-		heatseekerBall.SetCarHitTeamNum(1);
-		heatseekerBall.OnHitTeamNumChanged();
-		heatseekerBall.UpdateColor();
+		if (isHeatseekerBall && !heatseekerBall.IsNull()) {
+			heatseekerBall.SetCarHitTeamNum(1);
+			heatseekerBall.OnHitTeamNumChanged();
+			heatseekerBall.UpdateColor();
+		}
 	}
 }
 

@@ -45,11 +45,11 @@ private:
 	};
 	
 	bool isHeatseeker = false;
-	bool isLANMatch = false;
 	bool active = false;
 	bool blockBothGoals = false;
 	bool blockBlueGoal = false;
 	bool blockOrangeGoal = false;
 	Barrier barrier1;  // Blue goal blocker
 	Barrier barrier2;  // Orange goal blocker
+	bool isLocalMatch = false;
 };

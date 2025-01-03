@@ -2,11 +2,12 @@
 
 🚀 **New Plugin Release: Heatseeker Goal Blocker** 🚀
 
-Practice your Heatseeker skills like never before! This plugin allows you to block one or both goals in Heatseeker mode, perfect for practicing redirects, double taps, and rallies without worrying about scoring. It is basically free play.
+Practice your Heatseeker skills like never before! This plugin allows you to block one or both goals in Heatseeker mode, perfect for practicing redirects, double taps, and rallies without worrying about scoring.
 
 ✨ **Features:**
-• Block Blue or Orange goal or both
-• Works with any standard map
+• Block Blue or Orange goal independently
+• Works in Exhibition matches, LAN matches, and with Rocket Plugin
+• Easy to toggle goals on/off during gameplay
 • Perfect for training sessions
 
 📥 **Download:**
@@ -14,14 +15,19 @@ BakkesPlugins: https://bakkesplugins.com/plugins/view/494
 
 🔧 **How to Use:**
 1. Install the plugin through Bakkesmod
-2. Start a LAN match
-3. Select Heatseeker mode and use a standard map
-4. Choose which goal(s) to block in plugin settings (no need to restart between changing settings)
+2. Start an Exhibition or LAN match
+3. Select Heatseeker mode
+4. Choose which goal(s) to block in plugin settings
 5. Start practicing!
 
 💻 **Source Code:**
 GitHub: <https://github.com/ncjsvr/HeatseekerGoalBlocker>
 
-⚠️ **Note:** Only works in LAN matches!
+⚠️ **Note:** 
+• Works in Exhibition and LAN matches
+• Heatseeker mode only
+• Cannot be used in online matches
+
+Special thanks to Acc70 for help with final optimizations and bug fixes! 🙏
 
 Happy training! 🎮✨
