@@ -9,9 +9,17 @@ void HeatseekerGoalBlocker::onLoad()
 {
 	_globalCvarManager = cvarManager;
 	
-	cvarManager->registerCvar("blocker_both_goals", "0", "Block both goals", true, true, 0, true, 1)
+	cvarManager->registerCvar("blocker_blue_goal", "0", "Block blue goal", true, true, 0, true, 1)
 		.addOnValueChanged([this](std::string oldValue, CVarWrapper cvar) {
-			blockBothGoals = cvar.getBoolValue();
+			blockBlueGoal = cvar.getBoolValue();
+			if (active) {
+				CreateGoalBlocker();
+			}
+		});
+	
+	cvarManager->registerCvar("blocker_orange_goal", "0", "Block orange goal", true, true, 0, true, 1)
+		.addOnValueChanged([this](std::string oldValue, CVarWrapper cvar) {
+			blockOrangeGoal = cvar.getBoolValue();
 			if (active) {
 				CreateGoalBlocker();
 			}
@@ -56,10 +64,12 @@ void HeatseekerGoalBlocker::CreateGoalBlocker()
 {
 	if (!gameWrapper->IsInGame()) return;
 
-	barrier1.center = Vector{0, -5150 - 100, 300};
-	barrier1.size = Vector{2500, 400, 1200};
+	if (blockBlueGoal) {
+		barrier1.center = Vector{0, -5150 - 100, 300};
+		barrier1.size = Vector{2500, 400, 1200};
+	}
 	
-	if (blockBothGoals) {
+	if (blockOrangeGoal) {
 		barrier2.center = Vector{0, 5150 + 100, 300};
 		barrier2.size = Vector{2500, 400, 1200};
 	}
@@ -68,7 +78,8 @@ void HeatseekerGoalBlocker::CreateGoalBlocker()
 	gameWrapper->HookEvent("Function TAGame.Car_TA.SetVehicleInput", 
 		std::bind(&HeatseekerGoalBlocker::checkCollision, this, std::placeholders::_1));
 	
-	cvarManager->log("Goal blocker(s) created - Blocking both goals: " + std::to_string(blockBothGoals));
+	cvarManager->log("Goal blockers updated - Blue: " + std::to_string(blockBlueGoal) + 
+					", Orange: " + std::to_string(blockOrangeGoal));
 }
 
 void HeatseekerGoalBlocker::checkCollision(std::string eventName)
@@ -85,7 +96,7 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 	Vector ballVelocity = ball.GetVelocity();
 	BallGodWrapper heatseekerBall = BallGodWrapper(ball.memory_address);
 
-	if (barrier1.collides(ballLocation)) {
+	if (blockBlueGoal && barrier1.collides(ballLocation)) {
 		Vector normal = barrier1.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
@@ -107,7 +118,7 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 		heatseekerBall.UpdateColor();
 	}
 	
-	if (blockBothGoals && barrier2.collides(ballLocation)) {
+	if (blockOrangeGoal && barrier2.collides(ballLocation)) {
 		Vector normal = barrier2.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
@@ -153,17 +164,27 @@ Vector HeatseekerGoalBlocker::Barrier::getCollisionNormal(Vector point) const
 
 void HeatseekerGoalBlocker::RenderSettings() 
 {
-	bool blockBoth = cvarManager->getCvar("blocker_both_goals").getBoolValue();
-	if (ImGui::Checkbox("Block Both Goals", &blockBoth)) {
-		cvarManager->getCvar("blocker_both_goals").setValue(blockBoth);
+	bool blueBlocked = cvarManager->getCvar("blocker_blue_goal").getBoolValue();
+	bool orangeBlocked = cvarManager->getCvar("blocker_orange_goal").getBoolValue();
+	
+	if (ImGui::Checkbox("Block Blue Goal", &blueBlocked)) {
+		cvarManager->getCvar("blocker_blue_goal").setValue(blueBlocked);
+	}
+	
+	if (ImGui::Checkbox("Block Orange Goal", &orangeBlocked)) {
+		cvarManager->getCvar("blocker_orange_goal").setValue(orangeBlocked);
 	}
 	
 	if (ImGui::IsItemHovered()) {
-		ImGui::SetTooltip("When enabled, blocks both goals instead of just blue team's goal");
-	}
-
-	if (!blockBoth) {
-		ImGui::TextColored(ImVec4(0.7f, 0.7f, 1.0f, 1.0f), "Currently blocking: Blue team's goal only");
+		std::string tooltip = "Currently blocking: ";
+		if (!blueBlocked && !orangeBlocked) {
+			tooltip += "No goals";
+		} else {
+			if (blueBlocked) tooltip += "Blue goal";
+			if (blueBlocked && orangeBlocked) tooltip += " and ";
+			if (orangeBlocked) tooltip += "Orange goal";
+		}
+		ImGui::SetTooltip(tooltip.c_str());
 	}
 }
 
