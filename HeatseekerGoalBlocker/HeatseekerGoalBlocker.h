@@ -52,4 +52,7 @@ private:
 	Barrier barrier1;  // Blue goal blocker
 	Barrier barrier2;  // Orange goal blocker
 	bool isLocalMatch = false;
+	bool collided = false;
+	int lastCollided = 0;
+	int ticksBetweenCollisions = 150;
 };

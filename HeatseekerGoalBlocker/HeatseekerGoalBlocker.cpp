@@ -27,6 +27,9 @@ void HeatseekerGoalBlocker::onLoad()
 	
 	gameWrapper->HookEventPost("Function GameEvent_Soccar_TA.WaitingForPlayers.OnBallSpawned",
 		std::bind(&HeatseekerGoalBlocker::OnGameStart, this));
+	
+	if (!gameWrapper->IsInGame() || gameWrapper->IsInOnlineGame()) return;
+	OnGameStart();
 }
 
 void HeatseekerGoalBlocker::OnGameStart()
@@ -106,7 +109,12 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 		heatseekerBall = BallGodWrapper(ball.memory_address);
 	}
 
-	if (blockBlueGoal && barrier1.collides(ballLocation)) {
+	bool collidesBarrier1 = barrier1.collides(ballLocation);
+	if (collided && !collidesBarrier1 && lastCollided > ticksBetweenCollisions) {
+		collided = false;
+		lastCollided = 0;
+	}
+	else if (!collided && collidesBarrier1 && blockBlueGoal) {
 		Vector normal = barrier1.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
@@ -128,9 +136,16 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 			heatseekerBall.OnHitTeamNumChanged();
 			heatseekerBall.UpdateColor();
 		}
+		
+		collided = true;
 	}
-	
-	if (blockOrangeGoal && barrier2.collides(ballLocation)) {
+
+	bool collidesBarrier2 = barrier2.collides(ballLocation);
+	if (collided && !collidesBarrier2 && lastCollided > ticksBetweenCollisions) {
+		collided = false;
+		lastCollided = 0;
+	}
+	else if (!collided && collidesBarrier2 && blockOrangeGoal) {
 		Vector normal = barrier2.getCollisionNormal(ballLocation);
 		Vector reflection = ballVelocity - normal * (2 * Vector::dot(ballVelocity, normal));
 		
@@ -152,6 +167,12 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 			heatseekerBall.OnHitTeamNumChanged();
 			heatseekerBall.UpdateColor();
 		}
+		
+		collided = true;
+	}
+
+	if (collided) {
+		lastCollided++;
 	}
 }
 
