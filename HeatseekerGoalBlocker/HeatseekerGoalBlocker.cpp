@@ -51,8 +51,6 @@ void HeatseekerGoalBlocker::CheckGameMode()
 	GameSettingPlaylistWrapper playlist = server.GetPlaylist();
 	if (!playlist.IsNull()) {
 		int playlistId = playlist.GetPlaylistId();
-		cvarManager->log("Playlist ID: " + std::to_string(playlistId));
-		cvarManager->log("Playlist Name: " + playlist.GetTitle().ToString());
 		bool isLanMatch = (playlistId == 24);
 		bool isExhibitionMatch = (playlistId == 8);
 
@@ -61,6 +59,8 @@ void HeatseekerGoalBlocker::CheckGameMode()
 
 		isHeatseeker = ball.IsGodBall();
 		isLocalMatch = (isExhibitionMatch) || (isLanMatch);
+		PriWrapper pri = gameWrapper->GetPlayerController().GetPRI();
+		isHost = !pri.IsNull() && pri.IsLocalPlayerPRI();
 		active = false;
 	}
 
@@ -73,14 +73,32 @@ void HeatseekerGoalBlocker::CreateGoalBlocker()
 {
 	if (!gameWrapper->IsInGame() || gameWrapper->IsInOnlineGame()) return;
 
-	if (blockBlueGoal) {
-		barrier1.center = Vector{0, -5150 - 100, 300};
-		barrier1.size = Vector{2500, 400, 1200};
-	}
-	
-	if (blockOrangeGoal) {
-		barrier2.center = Vector{0, 5150 + 100, 300};
-		barrier2.size = Vector{2500, 400, 1200};
+	if (isHost) {
+		if (blockBlueGoal) {
+			barrier1.center = Vector{0, -5150 - 100, 300};
+			barrier1.size = Vector{2500, 400, 1200};
+		}
+		
+		if (blockOrangeGoal) {
+			barrier2.center = Vector{0, 5150 + 100, 300};
+			barrier2.size = Vector{2500, 400, 1200};
+		}
+		
+		cvarManager->getCvar("blocker_blue_goal").setValue(blockBlueGoal);
+		cvarManager->getCvar("blocker_orange_goal").setValue(blockOrangeGoal);
+	} else {
+		blockBlueGoal = cvarManager->getCvar("blocker_blue_goal").getBoolValue();
+		blockOrangeGoal = cvarManager->getCvar("blocker_orange_goal").getBoolValue();
+		
+		if (blockBlueGoal) {
+			barrier1.center = Vector{0, -5150 - 100, 300};
+			barrier1.size = Vector{2500, 400, 1200};
+		}
+		
+		if (blockOrangeGoal) {
+			barrier2.center = Vector{0, 5150 + 100, 300};
+			barrier2.size = Vector{2500, 400, 1200};
+		}
 	}
 	
 	active = true;
@@ -97,6 +115,8 @@ void HeatseekerGoalBlocker::checkCollision(std::string eventName)
 
 	ServerWrapper server = gameWrapper->GetCurrentGameState();
 	if (server.IsNull()) return;
+
+	if (!isHost) return;
 
 	BallWrapper ball = server.GetBall();
 	if (ball.IsNull()) return;

@@ -55,4 +55,6 @@ private:
 	bool collided = false;
 	int lastCollided = 0;
 	int ticksBetweenCollisions = 150;
+	bool isHost = false;
+	void SetBarrierState(bool blueBlocked, bool orangeBlocked);
 };

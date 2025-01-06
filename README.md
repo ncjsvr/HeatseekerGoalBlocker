@@ -29,10 +29,18 @@ or
 ## Compatibility
 
 - Works in Exhibition matches
-- Works in LAN matches
+- Works in LAN matches (only host needs the plugin)
 - Works with Rocket Plugin
 - Heatseeker mode only
 - Will not function in online matches
+
+## Multiplayer Usage
+
+For LAN matches with multiple players:
+- Only the host needs to have the plugin installed
+- All players in the match will see the goal blocking effect
+- The host can toggle goals on/off during gameplay
+- Other players don't need to install anything
 
 ## Source Code
 
