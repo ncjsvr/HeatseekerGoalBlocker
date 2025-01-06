@@ -29,8 +29,8 @@ or
 ## Compatibility
 
 - Works in Exhibition matches
-- Works in LAN matches (only host needs the plugin)
-- Works with Rocket Plugin
+- Works in LAN matches 
+- Works with Rocket Plugin/hamachi LAN
 - Heatseeker mode only
 - Will not function in online matches
 
