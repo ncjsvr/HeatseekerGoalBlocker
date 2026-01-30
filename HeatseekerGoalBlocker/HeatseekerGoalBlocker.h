@@ -13,11 +13,9 @@ class HeatseekerGoalBlocker: public BakkesMod::Plugin::BakkesModPlugin, public B
 public:
 	void onLoad() override;
 	
-	// PluginSettingsWindow interface
 	std::string GetPluginName() override { return "Heatseeker Goal Blocker"; }
 	void RenderSettings() override;
 
-	// PluginWindow interface
 	bool isWindowOpen_ = false;
 	bool isMinimized_ = false;
 	std::string menuTitle_ = "HeatseekerGoalBlocker";
@@ -36,6 +34,9 @@ private:
 	void CheckGameMode();
 	void CreateGoalBlocker();
 	void checkCollision(std::string eventName);
+	void SetBallCanBeScored(BallWrapper ball, bool canBeScored);
+	void RenderCanvas(CanvasWrapper canvas);
+	void LaunchHeatseekerPractice();
 	
 	struct Barrier {
 		Vector center;
@@ -46,15 +47,19 @@ private:
 	
 	bool isHeatseeker = false;
 	bool active = false;
-	bool blockBothGoals = false;
-	bool blockBlueGoal = false;
-	bool blockOrangeGoal = false;
-	Barrier barrier1;  // Blue goal blocker
-	Barrier barrier2;  // Orange goal blocker
+	bool blockBlueGoal = true;
+	bool blockOrangeGoal = true;
+	bool enableScoring = false;
+	Barrier barrier1;
+	Barrier barrier2;
 	bool isLocalMatch = false;
 	bool collided = false;
 	int lastCollided = 0;
 	int ticksBetweenCollisions = 150;
 	bool isHost = false;
-	void SetBarrierState(bool blueBlocked, bool orangeBlocked);
+	bool collisionHooked = false;
+	
+	bool showMenuButton = true;
+	Vector2F buttonPos = {50, 400};
+	Vector2F buttonSize = {250, 50};
 };
